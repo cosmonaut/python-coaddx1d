@@ -1,0 +1,8 @@
+Dependencies:
+
+python >= 2.5
+numpy
+scipy
+pyfits
+idlsave
+
