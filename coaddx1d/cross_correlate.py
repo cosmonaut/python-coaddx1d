@@ -1,30 +1,47 @@
 import numpy as np
 
-#This code was translated from the GHRS IDL library function, CROSS_CORRELATE
-#http://www.astro.washington.edu/docs/idl/cgi-bin/getpro/library43.html?CROSS_CORRELATE
+# This code was translated from the GHRS IDL library function, CROSS_CORRELATE
+# http://www.astro.washington.edu/docs/idl/cgi-bin/getpro/library43.html?CROSS_CORRELATE
 
-#HISTORY:
-#Version 1  D. Lindler  Sept. 1991
+# HISTORY:
+# Version 1  D. Lindler  Sept. 1991
+
+# Translated into python by Nico Nell (nicholas.nell@colorado.edu)
 
 def _cross_correlate(s1, s2, ishift = None, width = None, i1 = None, i2 = None):
+    """
+    Normalized mean and covariance cross correlation offset between
+    two input vectors or the same length.
 
-    #s1 - first spectrum
-    #s2 - second spectrum
+    Inputs:
+    s1: first spectrum
+    s2: second spectrum
+    ishift: approximate offset (default = 0)
+    width: search width (default = 15)
+    i1,i2: region in first spectrum containing the feature(s)
+           (default  i1=0, i2=n_elements(s2)-1)
 
-    #ishift - approximate offset (default = 0)
-    #width - search width (default = 15)
-    #i1,i2 - region in first spectrum containing the feature(s)
-    #        (default  i1=0, i2=n_elements(s2)-1)
+    Output:
+    offset: offset of s2 from s1 in data points
+    corr: output correlation vector
+    Note: Output is given in the form of a tuple (offset, corr)
+    """
+    
+    # s1 - first spectrum
+    # s2 - second spectrum
 
-    #outputs:
-    #offset: offset of s2 from s1 in data points
-    #corr: output correlation vector
+    # ishift - approximate offset (default = 0)
+    # width - search width (default = 15)
+    # i1,i2 - region in first spectrum containing the feature(s)
+    #         (default  i1=0, i2=n_elements(s2)-1)
+
+    # outputs:
+    # offset: offset of s2 from s1 in data points
+    # corr: output correlation vector
 
     if ishift == None:
         ishift = 0.0
     approx = int((ishift+100000.5) - 100000.0)
-
-    # print("approx: %s" % approx)
 
     if width == None:
         width = 15
@@ -69,9 +86,6 @@ def _cross_correlate(s1, s2, ishift = None, width = None, i1 = None, i2 = None):
     maxc = corr.max()
     k = np.where(corr == corr.max())
     k = k[0][0]
-
-    # print(maxc)
-    # print(k)
 
     if (k == 0) or (k == (width - 1.0)):
         raise Exception("cross correlate - maximum on edge of search area")

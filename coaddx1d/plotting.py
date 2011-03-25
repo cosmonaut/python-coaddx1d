@@ -1,10 +1,23 @@
 import matplotlib.pyplot as mp
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.ticker import MultipleLocator
-from matplotlib.ticker import LinearLocator
+#from matplotlib.ticker import LinearLocator
 from scipy.signal import medfilt
 
 def plotflux(spectrum, err = True, show = False, name = None):
+    """
+    Create a flux vs. wavelength plot.
+
+    Inputs:
+    spectrum: a COSSpectrum object created by coaddx1d.
+    err: boolean switch for plotting the flux error (default True)
+
+    Output:
+    fig: a matplotlib figure instance of the figure
+    """
+
+    mp.clf()
+
     fig = mp.figure()
     yfmt = ScalarFormatter(useMathText = True)
     
@@ -27,8 +40,10 @@ def plotflux(spectrum, err = True, show = False, name = None):
             ax.yaxis.set_major_formatter(yfmt)
             ax.xaxis.set_major_locator(MultipleLocator(20))
             ax.xaxis.set_minor_locator(MultipleLocator(5))
+
             xmin = (spectrum.wave.min() - buff) + half*float(i)
             xmax = (spectrum.wave.min() - buff) + half*float(i + 1.0)
+
             mp.xlim((xmin, xmax))
             mp.ylim((ymin, ymax))
             mp.xlabel(xlabel)
@@ -45,16 +60,8 @@ def plotflux(spectrum, err = True, show = False, name = None):
                         color = 'red',
                         linewidth = 0.5,
                         linestyle = 'dotted')
-            
-    #mp.xlim((xmin, xmax))
-    #mp.ylim((ymin, ymax))
+
     
-    #if not name:
-    #    name = spectrum.targname.lower() + "-" spectrum.dateobs.lower() + ".pdf"
-
-
-    #mp.plot(spectrum.wave, spectrum.flux)
-
     # if show:
     #     mp.show()
     # else:
@@ -65,4 +72,24 @@ def plotflux(spectrum, err = True, show = False, name = None):
 
 
 def plotexptime(spectrum, show = False):
-    pass
+    """
+    Create an exposure time vs. wavelength plot
+
+    Inputs:
+    spectrum: a COSSpectrum object created by coaddx1d
+
+    Output:
+    fig: a matplotlib figure instance
+    """
+
+    # Just a basic implementation for now...
+    mp.clf()
+    fig = mp.figure()
+
+    # We should divide this for G130M + G160M?
+    mp.plot(spectrum.wave,
+            spectrum.exptime,
+            color = 'black',
+            linewidth = 0.5)
+
+    return fig

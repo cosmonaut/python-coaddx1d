@@ -1,10 +1,11 @@
 from numpy import array, ndarray
 
-# Documentation from original program"
-# pass in wave, segment, and grating
-# and get out the smov sensitivity update
-# USE the lv option for data taken after Aug 13, 2009
-# divide the returned sensvector value times your SMOV flux to get updated values
+# Documentation from original program:
+
+# pass in wave, segment, and grating and get out the smov sensitivity
+# update USE the lv option for data taken after Aug 13, 2009 divide
+# the returned sensvector value times your SMOV flux to get updated
+# values
 
 # Original IDL code written by Steve Penton.
 
