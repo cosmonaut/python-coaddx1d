@@ -50,8 +50,6 @@ class COSSpectrum(object):
         self.err = err
         self.exptime = exptime
         
-        return
-
 
 def coadd(files=None, path='.', chan=1, method=1,
           no_flat=False, no_flange=False, update_flux=False,
@@ -121,7 +119,7 @@ def coadd(files=None, path='.', chan=1, method=1,
         Default is True
         
     Returns:
-    spectrum - a Spectrum object containing all the necessary information.
+    spectrum - a COSSpectrum object containing all the necessary information.
     
     '''
     
@@ -345,13 +343,15 @@ def coadd(files=None, path='.', chan=1, method=1,
             chanind_dum = chanind
 
         for i in chanind_dum:
-            ref = np.concatenate((np.where(grating == channame[i]),
-                                  np.where(cenwave == bestgrate[i]),
-                                  np.where(fppos == 3)),axis = 1)
+            # ref = np.concatenate((np.where(grating == channame[i]),
+            #                       np.where(cenwave == bestgrate[i]),
+            #                       np.where(fppos == 3)),axis = 1)
+            ref = (grating == channame[i]) & (cenwave == bestgrate[i]) & (fppos == 3)
             ref = ref[0]
             if len(ref) == 0:
-                ref = np.concatenate((np.where(grating == channame[i]),
-                                      np.where(fppos == 3)), axis = 1)
+                ref = (grating == channame[i]) & (fppos == 3)
+                # ref = np.concatenate((np.where(grating == channame[i]),
+                #                       np.where(fppos == 3)), axis = 1)
                 ref = ref[0]
 
             if len(ref) == 0:
@@ -389,12 +389,15 @@ def coadd(files=None, path='.', chan=1, method=1,
             xcor_width = 30
             for j in range(1):
                 for k in thisgrat[0]:
-                    refrange = np.concatenate((np.where(wavein[:,ref,j] >= minxcorwave[i][j]),
-                                                    np.where(wavein[:,ref,j] <= maxxcorwave[i][j])),
-                                              axis = 1)
-                    comprange = np.concatenate((np.where(wavein[:,k,j] >= minxcorwave[i][j]),
-                                               np.where(wavein[:,k,j] <= maxxcorwave[i][j])),
-                                              axis = 1)
+                    refrange = (wavein[:, ref, j] >= minxcorwave[i][j]) & (wavein[:, ref, j] <= maxxcorwave[i][j])
+                    comprange = (wavein[:, k, j] >= minxcorwave[i][j]) & (wavein[:, k, j] <= maxxcorwave[i][j])
+                    
+                    # refrange = np.concatenate((np.where(wavein[:,ref,j] >= minxcorwave[i][j]),
+                    #                            np.where(wavein[:,ref,j] <= maxxcorwave[i][j])),
+                    #                           axis = 1)
+                    # comprange = np.concatenate((np.where(wavein[:,k,j] >= minxcorwave[i][j]),
+                    #                            np.where(wavein[:,k,j] <= maxxcorwave[i][j])),
+                    #                           axis = 1)
                     refx = wavein[refrange, ref, j]
                     refy = fluxin[refrange, ref, j]
                     compx = wavein[comprange, k, j]
@@ -474,8 +477,9 @@ def coadd(files=None, path='.', chan=1, method=1,
         wave = wave[good]
         wave = np.array([wave, wave.max() + disp[1] + disp[1]*np.array(range(27800), dtype=float)])
         #wave = np.array([wave, wave.max() + disp[1] + disp[1]*np.arange(27800)])
-        good = np.concatenate((np.where(wave >= wavein[goodwave].min()),
-                               np.where(wave <= wavein[goodwave].max())), axis = 1)
+        good = (wave >= wavein[goodwave].min()) & (wave <= wavein[goodwave].max())
+        # good = np.concatenate((np.where(wave >= wavein[goodwave].min()),
+        #                        np.where(wave <= wavein[goodwave].max())), axis = 1)
         wave = wave[good]
     else:
         minwave = np.round(wavein[goodwave].min())
@@ -605,14 +609,18 @@ def _herczeg(refx, refy, compx, compy, verbose = False):
         userange = np.array([refxrange[0] if refxrange[0] > compxrange[0] else compxrange[0],
                              refxrange[1] if refxrange[1] > compxrange[1] else compxrange[1]])
 
-        compgood = np.concatenate((np.where(compx >= userange[0]),
-                                   np.where(compx <= userange[1])), axis = 1)
-        refgood = np.concatenate((np.where(refx >= userange[0]),
-                                  np.where(refx <= userange[1])), axis = 1)
+        compgood = (compx >= userange[0]) & (compx <= userange[1])
+        refgood = (refx >= userange[0]) & (refx <= userange[1])
+        
+        # compgood = np.concatenate((np.where(compx >= userange[0]),
+        #                            np.where(compx <= userange[1])), axis = 1)
+        # refgood = np.concatenate((np.where(refx >= userange[0]),
+        #                           np.where(refx <= userange[1])), axis = 1)
         compx = compx[compgood]
         compy = compy[compgood]
         refx = refx[refgood]
         refy = refy[refgood]
+
         # RECURSION! 
         return _herczeg(refx, refy, compx, compy, verbose)
     else:
