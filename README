@@ -1,0 +1,34 @@
+## python-coaddx1d
+
+This is a python translation of Charles Danforth's coaddx1d IDL
+routine. This program provides the same capabilities as the IDL
+coaddx1d routine. The coaddition provides three save file formats of
+dat csv and a python pickle file (the equivalent of idl save files --
+that is, the ability to save the python spectrum object). There are
+also two convenient plotting routines for easy creation of plots of
+the entire coadded spectrum.
+
+
+## Intsallation
+
+Dependencies:
+python >= 2.5
+numpy
+scipy
+pyfits
+idlsave
+matplotlib
+
+Installation is simple and accomplished by the command:
+
+python setup.py install
+
+Alternatively for installing in a different location one can use:
+
+python setup.py --root="/some/directory" install
+
+
+## Usage
+
+API documentation and examples are located at
+http://casa.colorado.edu/~nell/site/software/python-coaddx1d
