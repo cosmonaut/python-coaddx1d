@@ -410,7 +410,7 @@ def coadd(files=None, path='.', chan=1, method=1,
                     
                     refx = wavein[refrange, ref, j]
                     refy = fluxin[refrange, ref, j]
-                    print refy
+
                     compx = wavein[comprange, k, j]
                     compy = fluxin[comprange, k, j]
 

@@ -16,8 +16,6 @@ def plotflux(spectrum, err = True, show = False, name = None):
     fig: a matplotlib figure instance of the figure
     """
 
-    mp.clf()
-
     fig = mp.figure()
     yfmt = ScalarFormatter(useMathText = True)
     
@@ -93,13 +91,12 @@ def plotexptime(spectrum, show = False):
     """
 
     # Just a basic implementation for now...
-    mp.clf()
     fig = mp.figure()
 
     # We should divide this for G130M + G160M?
     # Note: coadd_x1d.pro uses nsum=7 for this plot as well...
     mp.plot(spectrum.wave,
-            spectrum.exptime,
+            medfilt(spectrum.exptime, 7.0),
             color = 'black',
             linewidth = 0.5)
 
