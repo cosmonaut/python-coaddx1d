@@ -1,19 +1,30 @@
-import matplotlib.pyplot as mp
-from matplotlib.ticker import ScalarFormatter
-from matplotlib.ticker import MultipleLocator
-#from matplotlib.ticker import LinearLocator
 from scipy.signal import medfilt
 
-def plotflux(spectrum, err = True, show = False, name = None):
+try:
+    import matplotlib.pyplot as mp
+    from matplotlib.ticker import ScalarFormatter
+    from matplotlib.ticker import MultipleLocator
+except:
+    print("WARNING: matplotlib was not imported. Plotting functions will not work")
+
+"""
+Plotting functions
+"""
+
+def plotflux(spectrum, err = True, scale = 2.0):
     """
     Create a flux vs. wavelength plot.
 
-    Inputs:
-    spectrum: a COSSpectrum object created by coaddx1d.
-    err: boolean switch for plotting the flux error (default True)
+    @type spectrum: L{COSSpectrum} object
+    @var spectrum: a COSSpectrum object created by coaddx1d.
+    @type err: bool
+    @var err: boolean switch for plotting the flux error (default True)
+    @type scale: float
+    @var scale: scale*mean(flux) determines the flux axis height (default 2.0)
+                This is a quick and dirty way of adjusting the flux axis upper
+                limit.
 
-    Output:
-    fig: a matplotlib figure instance of the figure
+    @return fig: a matplotlib figure instance of the figure
     """
 
     fig = mp.figure()
@@ -27,7 +38,7 @@ def plotflux(spectrum, err = True, show = False, name = None):
     xmin = spectrum.wave.min() - buff
     xmax = spectrum.wave.max() + buff
     ymin = 0.0
-    ymax = spectrum.flux.mean()*2.0
+    ymax = spectrum.flux.mean()*scale
 
     mp.ylim((ymin, ymax))
 
@@ -56,15 +67,17 @@ def plotflux(spectrum, err = True, show = False, name = None):
         mp.ylim((ymin, ymax))
         mp.xlabel(xlabel)
         mp.ylabel(ylabel)
+
+        region = (spectrum.wave >= xmin) & (spectrum.wave <= xmax)
         
-        mp.plot(spectrum.wave,
-                medfilt(spectrum.flux, 7.0),
+        mp.plot(spectrum.wave[region],
+                medfilt(spectrum.flux[region], 7.0),
                 color = 'black',
                 linewidth = 0.5)
         
         if err:
-            mp.plot(spectrum.wave,
-                    medfilt(spectrum.err, 7.0),
+            mp.plot(spectrum.wave[region],
+                    medfilt(spectrum.err[region], 7.0),
                     color = 'red',
                     linewidth = 0.5,
                     linestyle = 'dotted')
@@ -75,7 +88,6 @@ def plotflux(spectrum, err = True, show = False, name = None):
     # else:
     #     #mp.savefig(name)
 
-    #mp.clf()
     return fig
 
 
@@ -83,18 +95,22 @@ def plotexptime(spectrum, show = False):
     """
     Create an exposure time vs. wavelength plot
 
-    Inputs:
-    spectrum: a COSSpectrum object created by coaddx1d
+    @type spectrum: L{COSSpectrum object}
+    @param spectrum: a COSSpectrum object created by coaddx1d
 
-    Output:
-    fig: a matplotlib figure instance
+    @return fig: a matplotlib figure instance
     """
 
     # Just a basic implementation for now...
     fig = mp.figure()
 
+    xlabel = r'Wavelength ($\AA$)'
+    ylabel = r'Exposure Time (s)'
+
+    mp.xlabel(xlabel)
+    mp.ylabel(ylabel)
+
     # We should divide this for G130M + G160M?
-    # Note: coadd_x1d.pro uses nsum=7 for this plot as well...
     mp.plot(spectrum.wave,
             medfilt(spectrum.exptime, 7.0),
             color = 'black',
