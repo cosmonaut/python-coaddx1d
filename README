@@ -31,4 +31,4 @@ python setup.py --root="/some/directory" install
 ## Usage
 
 API documentation and examples are located at
-http://casa.colorado.edu/~nell/site/software/python-coaddx1d
+http://casa.colorado.edu/~nell/site/software/python-coaddx1d.html

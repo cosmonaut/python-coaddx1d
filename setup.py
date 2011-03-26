@@ -7,6 +7,6 @@ setup(name='python-coaddx1d',
       description='python-coaddx1d - generalized coaddition for COS x1d files',
       author='Nico Nell',
       author_email='nicholas.nell@colorado.edu',
-      url='http://casa.colorado.edu/~nell/site/software/python-coaddx1d',
+      url='http://casa.colorado.edu/~nell/site/software/python-coaddx1d.html',
       packages=['coaddx1d'],
      )
