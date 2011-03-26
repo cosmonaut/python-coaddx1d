@@ -17,16 +17,23 @@ def plotflux(spectrum, err = True, scale = 2.0):
     """
     Create a flux vs. wavelength plot.
 
-    @type spectrum: L{COSSpectrum} object
-    @var spectrum: a COSSpectrum object created by coaddx1d.
-    @type err: bool
-    @var err: boolean switch for plotting the flux error (default True)
-    @type scale: float
-    @var scale: scale*mean(flux) determines the flux axis height (default 2.0)
-                This is a quick and dirty way of adjusting the flux axis upper
-                limit.
+    Require Arguments:
 
-    @return fig: a matplotlib figure instance of the figure
+        *spectrum*: [ COSSpectrum ]
+        a COSSpectrum object created by coaddx1d.
+        
+        *err*: [ bool ]
+        boolean switch for plotting the flux error (default True)
+        
+        *scale*: [ float ]
+        scale*mean(flux) determines the flux axis height (default 2.0)
+        This is a quick and dirty way of adjusting the flux axis upper
+        limit.
+
+    Returns:
+    
+        *fig*: [ matplotlib.pyplot.figure ]
+        a matplotlib figure instance of the figure
     """
 
     fig = mp.figure()
@@ -97,10 +104,15 @@ def plotexptime(spectrum, show = False):
     """
     Create an exposure time vs. wavelength plot
 
-    @type spectrum: L{COSSpectrum object}
-    @param spectrum: a COSSpectrum object created by coaddx1d
+    Require Arguments:
 
-    @return fig: a matplotlib figure instance
+        *spectrum*: [ COSSpectrum ]
+        a COSSpectrum object created by coaddx1d.
+
+    Returns:
+    
+        *fig*: [ matplotlib.pyplot.figure ]
+        a matplotlib figure instance of the figure
     """
 
     # Just a basic implementation for now...
