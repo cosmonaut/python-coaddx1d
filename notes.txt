@@ -5,4 +5,4 @@ numpy
 scipy
 pyfits
 idlsave
-
+matplotlib
