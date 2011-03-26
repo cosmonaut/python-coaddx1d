@@ -72,81 +72,84 @@ def coadd(files=None, path='.', chan=1, method=1,
     '''
     Coadd Cosmic Origins Spectrograph x1d files and return a COSSpectrum object
 
-    @type files: list of strings
-    @param files: 
+    Keyword Arguments: 
+    
+        *files*: [ list of strings ]
         List of files to coadd. If this option is not specified then coadd will
         use all x1d files in the given path.
-    @type path: str
-    @param path:
+
+        *path*: [ str ]
         Path where the x1d files to coadd are.
         Default: current working directory.
-    @type chan: int
-    @param chan:
+
+        *chan*: [ int ]
         This number corresponds to the gratings used
         1 - G130M (Default)
         2 - G160M
         3 - Both M gratings (G130M + G160M)
         4 - G140L
-    @type method: int
-    @param method:
+
+        *method*: [ int ]
         This number corresponds to the method used to coadd
         -1 - simple mean
         0 -
         1 - modified exposure weighting (Default)
         2 - error squared weighting
         3 - signal-to-noise squared weighting
-    @type no_flat: bool
-    @param no_flat:
+
+        *no_flat*: [ bool ]
         Do not perform first-order flat fielding (aka gridwire removal)
         Default is false
-    @type no_flange: bool
-    @param no_flange:
+
+        *no_flange*: [ bool ]
         Do not de-weight pixels at the edges of the detectors in each exposure
         Default is false
-    @type update_flux: bool
-    @param update_flux:
+
+        *update_flux*: [ bool ]
         Correct early flux calibration. This should no longer be necessary
         Default is false
-    @type no_align: bool
-    @param no_align:
+
+        *no_align*: [ bool ]
         Do not cross-correlate exposures
         Default is false
-    @type scale: list of float
-    @param scale:
+
+        *scale*: [ list of floats ]
         Set of scaling factors to multiply input fluxen, errors by. Should be one
         scale per input file.
         Default is None
-    @type indivshift: list of float
-    @param indivshift
+
+        *indivshift*: [ list of floats ]
         Exposure/side specific shift (in angstroms). Vector must be [n,2] where n
         is the number of files.
-    @type ubershift: float
-    @param ubershift
+
+        *ubershift*: [ float ]
         Constant shift (in angstroms) to shift the wavelength by.
-    @type savefile: str or bool
-    @param savefile:
+
+        *savefile*: [ str or bool ]
         Name for a file to save the coadded data to. If set to True then a
         default name of "<target>-<grating>" is used.
         Default is None
-    @type saveformat: str
-    @param saveformat:
+
+        *saveformat*: [ str ]
         Format to use for the save file.
         "pickle" - Save the data as a pickled python object.
         "dat" - Save the file as an ascii space separated file.
         "csv" - Save the file as a comma separated value file.
         Default is "dat"
-    @type newflat: bool
-    @param newflat:
+
+        *newflat*: [ bool ]
         NOT YET SUPPORTED!
         Use the itterative flatfield files
         Default is false
-    @type verbose: bool
-    @param verbose:
+
+        *verbose*: [ bool ]
         This is used to show or hide stdout messages from this program.
         Default is True
 
-    @rtype spectrum: L{COSSpectrum} object
-    @return spectrum: a COSSpectrum object containing all the necessary information.
+    Returns:
+        
+        *spectrum*: [ COSSpectrum ]
+        a COSSpectrum object containing all the necessary information.
     
     '''
     
