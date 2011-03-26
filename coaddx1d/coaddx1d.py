@@ -20,7 +20,10 @@ from cross_correlate import _cross_correlate
 # Translated into python by Nico Nell (nicholas.nell@colorado.edu)
 
 
-# We need the wireflat_iter.idl file for the newflat option...
+# TODO We need the wireflat_iter.idl file for the newflat option...
+# TODO: test this and previous methods to check exposure time. This
+# method (vs the concatenates) has some peaks that are probably caused
+# by /0
 
 # Ignore divide by 0 math errors.
 np.seterr(divide='ignore', invalid='ignore')
@@ -346,18 +349,23 @@ def coadd(files=None, path='.', chan=1, method=1,
             # ref = np.concatenate((np.where(grating == channame[i]),
             #                       np.where(cenwave == bestgrate[i]),
             #                       np.where(fppos == 3)),axis = 1)
-            ref = (grating == channame[i]) & (cenwave == bestgrate[i]) & (fppos == 3)
-            ref = ref[0]
+            ref = np.intersect1d(np.where(grating == channame[i])[0],
+                                 np.where(cenwave == bestgrate[i])[0])
+            ref = np.intersect1d(ref, np.where(fppos == 3)[0])
+            
+            #ref = (grating == channame[i]) & (cenwave == bestgrate[i]) & (fppos == 3)
+            #ref = ref[0]
+
             if len(ref) == 0:
-                ref = (grating == channame[i]) & (fppos == 3)
+                ref = np.intersect1d(np.where(grating == channame[i])[0],
+                                     np.where(fppos == 3)[0])
+                #ref = (grating == channame[i]) & (fppos == 3)
                 # ref = np.concatenate((np.where(grating == channame[i]),
                 #                       np.where(fppos == 3)), axis = 1)
-                ref = ref[0]
-
+                #ref = ref[0]
             if len(ref) == 0:
                 ref = np.where(grating == channame[i])
                 ref = ref[0]
-
             if len(ref) > 1:
                 if verbose:
                     print(" --- ")
@@ -366,7 +374,6 @@ def coadd(files=None, path='.', chan=1, method=1,
 
                 if verbose:
                     for j in ref:
-                        # Print stuff
                         print(str(j).strip() + "-" + " ".join((files[j],str(grating[j]),
                                                                str(cenwave[j]),str(fppos[j]),
                                                                str(exptin[:,j,0].max()),
@@ -389,8 +396,10 @@ def coadd(files=None, path='.', chan=1, method=1,
             xcor_width = 30
             for j in range(1):
                 for k in thisgrat[0]:
-                    refrange = (wavein[:, ref, j] >= minxcorwave[i][j]) & (wavein[:, ref, j] <= maxxcorwave[i][j])
-                    comprange = (wavein[:, k, j] >= minxcorwave[i][j]) & (wavein[:, k, j] <= maxxcorwave[i][j])
+                    refrange = (wavein[:, ref, j] >= minxcorwave[i][j]) & \
+                               (wavein[:, ref, j] <= maxxcorwave[i][j])
+                    comprange = (wavein[:, k, j] >= minxcorwave[i][j]) & \
+                                (wavein[:, k, j] <= maxxcorwave[i][j])
                     
                     # refrange = np.concatenate((np.where(wavein[:,ref,j] >= minxcorwave[i][j]),
                     #                            np.where(wavein[:,ref,j] <= maxxcorwave[i][j])),
@@ -398,8 +407,10 @@ def coadd(files=None, path='.', chan=1, method=1,
                     # comprange = np.concatenate((np.where(wavein[:,k,j] >= minxcorwave[i][j]),
                     #                            np.where(wavein[:,k,j] <= maxxcorwave[i][j])),
                     #                           axis = 1)
+                    
                     refx = wavein[refrange, ref, j]
                     refy = fluxin[refrange, ref, j]
+                    print refy
                     compx = wavein[comprange, k, j]
                     compy = fluxin[comprange, k, j]
 
@@ -409,8 +420,8 @@ def coadd(files=None, path='.', chan=1, method=1,
                                                           compy,
                                                           verbose = verbose)
                     
-                    (shift, corr) = _cross_correlate(refy[0],
-                                                     compy[0],
+                    (shift, corr) = _cross_correlate(refy,
+                                                     compy,
                                                      width = xcor_width)
 
                     xshift[k, j] = shift*disp[i]
@@ -616,6 +627,7 @@ def _herczeg(refx, refy, compx, compy, verbose = False):
         #                            np.where(compx <= userange[1])), axis = 1)
         # refgood = np.concatenate((np.where(refx >= userange[0]),
         #                           np.where(refx <= userange[1])), axis = 1)
+
         compx = compx[compgood]
         compy = compy[compgood]
         refx = refx[refgood]
