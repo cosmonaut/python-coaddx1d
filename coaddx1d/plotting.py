@@ -33,33 +33,43 @@ def plotflux(spectrum, err = True, show = False, name = None):
 
     mp.ylim((ymin, ymax))
 
-    if spectrum.grating[0] == "G130M":
-        half = (spectrum.wave.max() - spectrum.wave.min() + 2.0*buff)/2.0
-        for i in range(2):
-            ax = mp.subplot(2, 1, (i + 1)%2)
-            ax.yaxis.set_major_formatter(yfmt)
-            ax.xaxis.set_major_locator(MultipleLocator(20))
-            ax.xaxis.set_minor_locator(MultipleLocator(5))
+    # Parse grating array...
 
-            xmin = (spectrum.wave.min() - buff) + half*float(i)
-            xmax = (spectrum.wave.min() - buff) + half*float(i + 1.0)
+    if spectrum.grating[0] == "G130M" or \
+       spectrum.grating[0] == "G160M" or \
+       spectrum.grating[0] == "G140L":
+        panes = 2
+    else:
+        # G130M + G160M
+        panes = 4
+    
 
-            mp.xlim((xmin, xmax))
-            mp.ylim((ymin, ymax))
-            mp.xlabel(xlabel)
-            mp.ylabel(ylabel)
+    panesize = (spectrum.wave.max() - spectrum.wave.min() + 2.0*buff)/2.0
+    for i in range(panes):
+        ax = mp.subplot(2, 1, (i + 1))
+        ax.yaxis.set_major_formatter(yfmt)
+        ax.xaxis.set_major_locator(MultipleLocator(20))
+        ax.xaxis.set_minor_locator(MultipleLocator(5))
 
+        xmin = (spectrum.wave.min() - buff) + panesize*float(i)
+        xmax = (spectrum.wave.min() - buff) + panesize*float(i + 1.0)
+        
+        mp.xlim((xmin, xmax))
+        mp.ylim((ymin, ymax))
+        mp.xlabel(xlabel)
+        mp.ylabel(ylabel)
+        
+        mp.plot(spectrum.wave,
+                medfilt(spectrum.flux, 7.0),
+                color = 'black',
+                linewidth = 0.5)
+        
+        if err:
             mp.plot(spectrum.wave,
-                    medfilt(spectrum.flux, 7.0),
-                    color = 'black',
-                    linewidth = 0.5)
-
-            if err:
-                mp.plot(spectrum.wave,
-                        medfilt(spectrum.err, 7.0),
-                        color = 'red',
-                        linewidth = 0.5,
-                        linestyle = 'dotted')
+                    medfilt(spectrum.err, 7.0),
+                    color = 'red',
+                    linewidth = 0.5,
+                    linestyle = 'dotted')
 
     
     # if show:
@@ -87,6 +97,7 @@ def plotexptime(spectrum, show = False):
     fig = mp.figure()
 
     # We should divide this for G130M + G160M?
+    # Note: coadd_x1d.pro uses nsum=7 for this plot as well...
     mp.plot(spectrum.wave,
             spectrum.exptime,
             color = 'black',
