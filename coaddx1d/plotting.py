@@ -1,3 +1,8 @@
+"""
+Plotting functions
+"""
+
+
 from scipy.signal import medfilt
 
 try:
@@ -7,9 +12,6 @@ try:
 except:
     print("WARNING: matplotlib was not imported. Plotting functions will not work")
 
-"""
-Plotting functions
-"""
 
 def plotflux(spectrum, err = True, scale = 2.0):
     """

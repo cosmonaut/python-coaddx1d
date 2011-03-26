@@ -1,16 +1,51 @@
+'''
+Documentation from original program:
+
+pass in wave, segment, and grating and get out the smov sensitivity
+update USE the lv option for data taken after Aug 13, 2009 divide
+the returned sensvector value times your SMOV flux to get updated
+values
+
+Original IDL code written by Steve Penton.
+
+http://casa.colorado.edu/~danforth/science/cos/cos_sens_update.pro
+
+Translated into python by Nico Nell (nicholas.nell@colorado.edu)
+'''
+
 from numpy import array, ndarray
 
-# Documentation from original program:
-
-# pass in wave, segment, and grating and get out the smov sensitivity
-# update USE the lv option for data taken after Aug 13, 2009 divide
-# the returned sensvector value times your SMOV flux to get updated
-# values
-
-# Original IDL code written by Steve Penton.
 
 def _cos_sens_update(wave, flux, segment = "FUVA", lv = False, grating = "G130M", p = None, sensvector = None):
+    """
+    Divide the returned sensvector value times your SMOV flux to get
+    updated values
 
+    Require arguments:
+
+        *wave*: [ numpy.array ]
+        wavelength array
+
+        *flux*: [ numpy.array ]
+        flux array
+
+    Optional Keyword Arguments:
+
+        *segment*: [ string ]
+        Name of the segment (FUVA or FUVB). The default is FUVA.
+
+        *lv*: [ bool ]
+        Use the lv option for data taken after Aug 13, 2009
+
+        *grating*: [ string ]
+        The grating used for these wavelength and flux arrays.
+
+        *p*: [ None ]
+        Unknown
+
+        *sensvector*: [None]
+        Unknown
+    """
     if (type(wave) and type(flux)) != ndarray:
         raise Exception("wave and flux inputs must be of type numpy.array")
 

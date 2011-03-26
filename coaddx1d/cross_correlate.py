@@ -1,29 +1,49 @@
+"""
+This code was translated from the GHRS IDL library function, CROSS_CORRELATE
+
+http://www.astro.washington.edu/docs/idl/cgi-bin/getpro/library43.html?CROSS_CORRELATE
+
+HISTORY:
+Version 1  D. Lindler  Sept. 1991
+
+Translated into python by Nico Nell (nicholas.nell@colorado.edu)
+"""
+
+
 import numpy as np
 
-# This code was translated from the GHRS IDL library function, CROSS_CORRELATE
-# http://www.astro.washington.edu/docs/idl/cgi-bin/getpro/library43.html?CROSS_CORRELATE
-
-# HISTORY:
-# Version 1  D. Lindler  Sept. 1991
-
-# Translated into python by Nico Nell (nicholas.nell@colorado.edu)
 
 def _cross_correlate(s1, s2, ishift = None, width = None, i1 = None, i2 = None):
     """
     Normalized mean and covariance cross correlation offset between
     two input vectors or the same length.
 
-    Inputs:
-    s1: first spectrum
-    s2: second spectrum
-    ishift: approximate offset (default = 0)
-    width: search width (default = 15)
-    i1,i2: region in first spectrum containing the feature(s)
-           (default  i1=0, i2=n_elements(s2)-1)
+    Required Arguments:
+    
+        *s1*: [ numpy.array ]
+        first spectrum
+        
+        *s2*: [ numpy.array ]
+        second spectrum
+
+        *ishift*: [ float ]
+        approximate offset (default = 0)
+
+        *width*: [ float ]
+        search width (default = 15)
+
+        *i1, i2*: [ float ]
+        region in first spectrum containing the feature(s)
+        (default  i1=0, i2=n_elements(s2)-1)
 
     Output:
-    offset: offset of s2 from s1 in data points
-    corr: output correlation vector
+
+        *offset*: [ numpy.array ]
+        offset of s2 from s1 in data points
+
+        *corr*: [ numpy.array ]
+        output correlation vector
+
     Note: Output is given in the form of a tuple (offset, corr)
     """
     
