@@ -61,7 +61,7 @@ def _cross_correlate(s1, s2, ishift = None, width = None, i1 = None, i2 = None):
 
     if ishift == None:
         ishift = 0.0
-    approx = int((ishift+100000.5) - 100000.0)
+    approx = int((ishift+100000.5) - 100000)
 
     if width == None:
         width = 15
