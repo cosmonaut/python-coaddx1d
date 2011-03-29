@@ -5,6 +5,7 @@ Author: Nico Nell (nicholas.nell@colorado.edu)
 """
 
 
+import numpy as np
 from scipy.signal import medfilt
 
 try:
@@ -54,19 +55,18 @@ def plotflux(spectrum, err = True, scale = 2.0):
     mp.ylim((ymin, ymax))
 
     # Parse grating array...
-
-    if spectrum.grating[0] == "G130M" or \
-       spectrum.grating[0] == "G160M" or \
-       spectrum.grating[0] == "G140L":
-        panes = 2
-    else:
-        # G130M + G160M
-        panes = 4
     
+    if len(np.unique(spectrum.grating)) > 1:
+        # G130M" + "G160M
+        panes = 4
+    else:
+        # Just one grating 
+        panes = 2
 
-    panesize = (spectrum.wave.max() - spectrum.wave.min() + 2.0*buff)/2.0
+    panesize = (spectrum.wave.max() - spectrum.wave.min() + 2.0*buff)/panes
+    
     for i in range(panes):
-        ax = mp.subplot(2, 1, (i + 1))
+        ax = mp.subplot(panes, 1, (i + 1))
         ax.yaxis.set_major_formatter(yfmt)
         ax.xaxis.set_major_locator(MultipleLocator(20))
         ax.xaxis.set_minor_locator(MultipleLocator(5))
