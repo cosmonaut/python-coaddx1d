@@ -179,7 +179,7 @@ def coadd(files=None, path='.', chan=1, method=1,
         #G130M + G160M
         chanind = [0,1]
     else:
-        chanind = chan - 1
+        chanind = int(chan - 1)
 
     # Add a / to the end of path if the user didn't add it..
     if path[-1] != os.path.sep:
@@ -218,17 +218,18 @@ def coadd(files=None, path='.', chan=1, method=1,
 
     if type(chanind) == int:
         g = np.where(grating == channame[chanind])
+        g = g[0]
     else:
         g = set(np.where(grating == channame[chanind[0]])[0]).union(
             set(np.where(grating == channame[chanind[1]])[0]))
         g = np.array(list(g))
 
-    if len(g[0]) > 0:
+    if len(g) > 0:
         grating = grating[g]
         cenwave = cenwave[g]
         fppos = fppos[g]
         files = files[g]
-        nfiles = len(g[0])
+        nfiles = len(g)
     else:
         raise Exception("No files match requested grating: %s" % channame[chan - 1])
 
@@ -417,17 +418,26 @@ def coadd(files=None, path='.', chan=1, method=1,
                 
                 
             ref = ref[0]
-            filenote[ref] = filenote[ref] + "alignment reference exposure"
+            filenote[ref] = filenote[ref] + "*"
             thisgrat = np.where(grating == grating[ref])
 
             xcor_width = 30
             for j in range(1):
                 for k in thisgrat[0]:
-                    refrange = (wavein[:, ref, j] >= minxcorwave[i][j]) & \
-                               (wavein[:, ref, j] <= maxxcorwave[i][j])
-                    comprange = (wavein[:, k, j] >= minxcorwave[i][j]) & \
-                                (wavein[:, k, j] <= maxxcorwave[i][j])
-                    
+                    # refrange does not need to be reassigned every
+                    # loop. no k dependence...
+                    # refrange = (wavein[:, ref, j] >= minxcorwave[i][j]) & \
+                    #            (wavein[:, ref, j] <= maxxcorwave[i][j])
+                    # comprange = (wavein[:, k, j] >= minxcorwave[i][j]) & \
+                    #             (wavein[:, k, j] <= maxxcorwave[i][j])
+
+                    # Note reverse from idl's [column, row] indexing...
+                    refrange = (wavein[:, ref, j] >= minxcorwave[j][i]) & \
+                               (wavein[:, ref, j] <= maxxcorwave[j][i])
+                    comprange = (wavein[:, k, j] >= minxcorwave[j][i]) & \
+                                (wavein[:, k, j] <= maxxcorwave[j][i])
+
+                    # The following did not work because IDL uses [column, row] indexing..
                     # refrange = np.concatenate((np.where(wavein[:,ref,j] >= minxcorwave[i][j]),
                     #                            np.where(wavein[:,ref,j] <= maxxcorwave[i][j])),
                     #                           axis = 1)
@@ -446,7 +456,7 @@ def coadd(files=None, path='.', chan=1, method=1,
                                                           compx,
                                                           compy,
                                                           verbose = verbose)
-                    
+
                     (shift, corr) = _cross_correlate(refy,
                                                      compy,
                                                      width = xcor_width)
@@ -509,22 +519,22 @@ def coadd(files=None, path='.', chan=1, method=1,
     goodwave = (fluxin != 0) & (wavein > 0.0)
     if chan == 3:
         # another case where the array should be float (double) type
-        wave = disp[0]*np.array(range(33099), dtype=float) + wavein[goodwave].min()
-        #wave = disp[0]*np.arange(33099) + wavein[goodwave].min()
+        wave = disp[0]*np.array(range(33099), dtype=np.float64) + wavein[goodwave].min()
         good = np.where(wave <= 1460.0)
         wave = wave[good]
-        wave = np.array([wave, wave.max() + disp[1] + disp[1]*np.array(range(27800), dtype=float)])
-        #wave = np.array([wave, wave.max() + disp[1] + disp[1]*np.arange(27800)])
+        wave = np.concatenate((wave,
+                               np.array(wave.max() +
+                                        disp[1] +
+                                        disp[1]*np.array(range(27800),
+                                                         dtype=np.float64))),
+                              axis= 1)
         good = (wave >= wavein[goodwave].min()) & (wave <= wavein[goodwave].max())
-        # good = np.concatenate((np.where(wave >= wavein[goodwave].min()),
-        #                        np.where(wave <= wavein[goodwave].max())), axis = 1)
         wave = wave[good]
     else:
         minwave = np.round(wavein[goodwave].min())
         maxwave = np.round(wavein[goodwave].max())
         wave = minwave + np.array(range(int((maxwave - minwave)/disp[chanind] + 1.0)),
-                                  dtype=float)*disp[chanind]
-        #wave = minwave + np.arange((maxwave - minwave)/disp[chanind] + 1.0)*disp[chanind]
+                                  dtype=np.float64)*disp[chanind]
 
     # Interpolate the individual exposures onto the coadded wavelength
     # vector
@@ -659,7 +669,6 @@ def _herczeg(refx, refy, compx, compy, verbose = False):
         compy = compy[compgood]
         refx = refx[refgood]
         refy = refy[refgood]
-
         # RECURSION! 
         return _herczeg(refx, refy, compx, compy, verbose)
     else:
