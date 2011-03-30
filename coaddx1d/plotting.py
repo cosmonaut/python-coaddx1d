@@ -93,12 +93,11 @@ def plotflux(spectrum, err = True, scale = 2.0):
                     linewidth = 0.5,
                     linestyle = 'dotted')
 
-    
-    # if show:
-    #     mp.show()
-    # else:
-    #     #mp.savefig(name)
 
+    if panes == 4:
+        # touchup for the 4-pane plot...
+        fig.subplots_adjust(hspace = 0.3)
+    
     return fig
 
 
