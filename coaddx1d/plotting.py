@@ -29,9 +29,9 @@ def plotflux(spectrum, err = True, scale = 2.0):
         boolean switch for plotting the flux error (default True)
         
         *scale*: [ float ]
-        scale*mean(flux) determines the flux axis height (default 2.0).
-        This is a quick and dirty way of adjusting the flux axis upper
-        limit.
+        scale*mean(flux) determines the flux axis height (default
+        2.0).  This is a quick and convenient way of adjusting the
+        flux axis upper limit.
 
     Returns:
     

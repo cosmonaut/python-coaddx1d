@@ -83,19 +83,21 @@ def coadd(files=None, path='.', chan=1, method=1,
         Default: current working directory.
 
         *chan*: [ int ]
-        This number corresponds to the gratings used
-        1 - G130M (Default)
-        2 - G160M
-        3 - Both M gratings (G130M + G160M)
-        4 - G140L
+        This number corresponds to the gratings used:
+        
+        1. G130M (Default)
+        2. G160M
+        3. Both M gratings (G130M + G160M)
+        4. G140L
 
         *method*: [ int ]
-        This number corresponds to the method used to coadd
-        -1 - simple mean
-        0 -
-        1 - modified exposure weighting (Default)
-        2 - error squared weighting
-        3 - signal-to-noise squared weighting
+        This number corresponds to the method used to coadd:
+        
+        - -1 - simple mean
+        - 0 -
+        - 1 - modified exposure weighting (Default)
+        - 2 - error squared weighting
+        - 3 - signal-to-noise squared weighting
 
         *no_flat*: [ bool ]
         Do not perform first-order flat fielding (aka gridwire removal)
@@ -131,11 +133,11 @@ def coadd(files=None, path='.', chan=1, method=1,
         Default is None
 
         *saveformat*: [ str ]
-        Format to use for the save file.
-        "pickle" - Save the data as a pickled python object.
-        "dat" - Save the file as an ascii space separated file.
-        "csv" - Save the file as a comma separated value file.
-        Default is "dat"
+        Format to use for the save file:
+
+        - "pickle" - Save the data as a pickled python object.
+        - "dat" - Save the file as an ascii space separated file (Default).
+        - "csv" - Save the file as a comma separated value file.
 
         *newflat*: [ bool ]
         NOT YET SUPPORTED!
