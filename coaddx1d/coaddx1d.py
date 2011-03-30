@@ -130,7 +130,7 @@ def coadd(files=None, path='.', chan=1, method=1,
         *savefile*: [ str or bool ]
         Name for a file to save the coadded data to. If set to True then a
         default name of "<target>-<grating>" is used.
-        Default is None
+        (Default is None)
 
         *saveformat*: [ str ]
         Format to use for the save file:
@@ -209,7 +209,7 @@ def coadd(files=None, path='.', chan=1, method=1,
     grating = np.array(['']*nfiles, dtype='S50')
     cenwave = np.array([0.0]*nfiles)
     fppos = np.array([0.0]*nfiles)
-    filenote = np.array([None]*nfiles, dtype='S50')
+    filenote = np.array(['']*nfiles, dtype='S50')
     
     for n, i in enumerate(files):
         hdulist = pyfits.open("".join((path,i)))
@@ -424,7 +424,7 @@ def coadd(files=None, path='.', chan=1, method=1,
             thisgrat = np.where(grating == grating[ref])
 
             xcor_width = 30
-            for j in range(1):
+            for j in range(2):
                 for k in thisgrat[0]:
                     # refrange does not need to be reassigned every
                     # loop. no k dependence...
@@ -486,12 +486,12 @@ def coadd(files=None, path='.', chan=1, method=1,
                                            str(grating[i]),
                                            str(cenwave[i]),
                                            str(fppos[i]),
-                                           str(exptin[:,i,0].max()),
-                                           str(np.median(fluxin[:,i,0])),
-                                           str(xshift[i,0]),
-                                           str(exptin[:,i,1].max()),
-                                           str(np.median(fluxin[:,i,1])),
-                                           str(xshift[i,1]),
+                                           format(exptin[:,i,0].max(), ".1e"),
+                                           format(np.median(fluxin[:,i,0]), ".2e"),
+                                           format(xshift[i,0], ".3f"),
+                                           format(exptin[:,i,1].max(), ".1e"),
+                                           format(np.median(fluxin[:,i,1]), ".2e"),
+                                           format(xshift[i,1], ".3f"),
                                            str(dateobs[i]),
                                            str(timeobs[i]),
                                            str(filenote[i]))))
