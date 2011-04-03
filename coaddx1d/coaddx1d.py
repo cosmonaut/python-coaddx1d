@@ -26,9 +26,11 @@ from cross_correlate import _cross_correlate
 
 
 # TODO We need the wireflat_iter.idl file for the newflat option...
-# TODO: test this and previous methods to check exposure time. This
-# method (vs the concatenates) has some peaks that are probably caused
-# by /0
+# TODO The order of the files array makes a notable difference in the
+# end results of the program... why? fix this...
+# TODO Test this these ways:
+# * make pickle save files for different file orders and compare
+# * check coadd_x1d.pro orders against itself.
 
 # Ignore divide by 0 math errors.
 np.seterr(divide='ignore', invalid='ignore')
@@ -241,7 +243,7 @@ def coadd(files=None, path='.', chan=1, method=1,
     # index #3 is wavelength
     nwave = len(spec[1].data[0][3])
     spec.close()
-    
+
     boxsize = 100
     zeroes = np.zeros((nwave))
     wavein = np.zeros((nwave, nfiles, 2))
@@ -263,7 +265,7 @@ def coadd(files=None, path='.', chan=1, method=1,
             for k in range(nwave):
                 lo = 0 if 0 > (k - boxsize/2) else (k - boxsize/2)
                 hi = (nwave - 1) if (nwave - 1) < (k + boxsize/2) else (k + boxsize/2)
-                aa = np.where(spec[1].data[j][4][lo:hi + 1] == 0)
+                aa = np.where(spec[1].data[j][4][lo:hi + 1] == 0.0)
                 naa = len(aa[0])
                 zeroes[k] = naa
 
@@ -330,12 +332,17 @@ def coadd(files=None, path='.', chan=1, method=1,
                 # This creates an array of INTS ... should be float
                 # edgedist = np.arange(npix)
                 # fixed.
-                edgedist = np.array(range(npix), dtype=float)
+                edgedist = np.array(range(npix), dtype=np.float64)
+                flange = np.exp(-1.0*(edgedist + 1.0)/flange_size)
+                flange_min = np.exp(-1.0*(npix - 2.0 - edgedist)/flange_size)
+                
+                # flange[np.where(flange < (np.exp(-1.0*(npix - 2.0 - edgedist)/flange_size)))] = \
+                #                        (np.exp(-1.0*(npix - 2.0 - edgedist)/flange_size))
 
-                flange = 1.0 + np.exp(-1.0*(edgedist + 1.0)/flange_size)
-                flange[np.where(flange < (np.exp(-1.0*(npix - 2.0 - edgedist)/flange_size)))] = \
-                                       (np.exp(-1.0*(npix - 2.0 - edgedist)/flange_size))
-
+                # assigning array[filter] = other_array does not work
+                # the same way in python as idl
+                flange[(flange < flange_min)] = flange_min[(flange < flange_min)]
+                flange = 1.0 + flange
                 errintmp = errintmp*flange
                 exptintmp = exptintmp/(flange**2)
 
@@ -356,11 +363,11 @@ def coadd(files=None, path='.', chan=1, method=1,
             # care of some of it, but there are still problems. 2/2/10
 
             smootherrin = medfilt(errin[:, n , j], 7)
-
+            
             for k in range(3,len(waveintmp) - 4):
                 if errin[k, n, j] <= 0.1*smootherrin[k]:
                     errin[k, n, j] = np.median(errin[k-3:k+4, n, j])
-            
+
         spec.close()
 
     xshift = np.zeros((nfiles, 2))
@@ -471,7 +478,7 @@ def coadd(files=None, path='.', chan=1, method=1,
         else:
             xshift = indivshift
             for i in range(nfiles):
-                for j in range(1):
+                for j in range(2):
                     if verbose:
                         print("Individual wavelength shift for %d, %d, %s, %s" %
                               (i,j,xshift[i,j],indivshift[i,j]))
