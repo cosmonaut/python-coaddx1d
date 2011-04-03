@@ -20,7 +20,7 @@ def plotflux(spectrum, err = True, scale = 2.0):
     """
     Create a flux vs. wavelength plot.
 
-    Require Arguments:
+    Required Arguments:
 
         *spectrum*: [ COSSpectrum ]
         a COSSpectrum object created by coaddx1d.
@@ -105,7 +105,7 @@ def plotexptime(spectrum, show = False):
     """
     Create an exposure time vs. wavelength plot
 
-    Require Arguments:
+    Required Arguments:
 
         *spectrum*: [ COSSpectrum ]
         a COSSpectrum object created by coaddx1d.
